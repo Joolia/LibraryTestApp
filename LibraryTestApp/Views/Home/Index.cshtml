@@ -1,0 +1,23 @@
+﻿@using System.Activities.Statements
+@using LibraryTestApp.EntityClasses;
+
+<div id="addBookContainer" class="add_book_cnt">
+   @{ Html.RenderAction("AddBookPartial", "Home"); }
+</div>
+<div class="table_container">
+   <h1>Books</h1>
+   <table id="booksTable">
+      <thead>
+      <tr>
+         <th>
+            ID
+         </th>
+         <th>Name</th>
+         <th>Pages</th>
+         <th>Authors</th>
+         <th>Published</th>
+         <th>Rating</th>
+      </tr>
+      </thead>
+   </table>
+</div>

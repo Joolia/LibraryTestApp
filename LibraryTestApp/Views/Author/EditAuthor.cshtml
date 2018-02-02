@@ -1,0 +1,20 @@
+﻿@using LibraryTestApp.Models;
+
+@model Author
+@{
+    ViewBag.Title = "Edit author";
+   var booksCount = Model.Books.Count;
+}
+
+<h1>@Model.FirstName @Model.LastName (@booksCount book@(booksCount > 1?"s":string.Empty))</h1>
+<div id="editAuthorContainer">
+   @using (Html.BeginForm("EditAuthorPost", "Author", FormMethod.Post, new {id = "editAuthorForm", data_authorId = Model.Id}))
+   {
+      @Html.LabelFor(model => model.FirstName, "First name: ")
+      @Html.TextBoxFor(model => model.FirstName)
+      <br/>
+      @Html.LabelFor(model => model.LastName, "Last name: ")
+      @Html.TextBoxFor(model => model.LastName)
+      <input type="submit" id="saveAuthorBtn" name="SaveButton" value="Save"/>
+   }
+</div>

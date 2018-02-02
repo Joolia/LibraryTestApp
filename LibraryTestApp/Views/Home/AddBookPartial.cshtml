@@ -1,0 +1,88 @@
+﻿@using LibraryTestApp.Models;
+
+@model Book
+@{
+   Layout = null;
+   List<Author> authorsList = ViewBag.Authors;
+   List<SelectListItem> authors = authorsList.Select(x => new SelectListItem
+   {
+      Text = $"{x.FirstName} {x.LastName}", Selected = (Model.Id != 0 && Model.Authors.Contains(x.Id)), Value = x.Id.ToString()
+   }).ToList();
+   var ratings = new List<SelectListItem>();
+   for (var i = 1; i <= 10; i++)
+   {
+      ratings.Add(new SelectListItem {Text = i.ToString(), Value = i.ToString(), Selected = Model.Rating == i});
+   }
+}
+
+<div>
+   @using (Html.BeginForm("EditCreateBook", "Home", new {id = "addBookForm", data_bookId = 0}))
+   {
+      @Html.HiddenFor(model => model.Id)
+
+      @Html.LabelFor(model=>model.Name, "Book name: ")
+      @Html.TextBoxFor(model => model.Name)
+      <br/>
+      @Html.LabelFor(model=>model.PublishingDate, "Book publishing date: ")
+      @Html.EditorFor(model => model.PublishingDate,
+         new { @class = "date-picker", id= "publishDate" })
+      <br/>
+      @Html.LabelFor(model => model.Rating, "Rating: ")
+      @Html.DropDownListFor(model=> model.Rating, ratings, new { id = "bookRating" })
+      <br/>
+      @Html.LabelFor(model=>model.PagesCount, "Pages amount: ")
+      @Html.TextBoxFor(model => model.PagesCount)
+      <br/>
+      @Html.LabelFor(model => model.Authors, "Authors: ")
+      @Html.DropDownListFor(model => model.Authors, authors, new {id = "authorsSelect", @class="multi-select", @multiple=true, @data_placeholder = " "})
+      <input type="button" id="saveBookBtn" name="SaveButton" value="Save" />
+   }
+</div>
+    <script>
+       $(function () {
+
+          function initInputs() {
+             $("#authorsSelect").chosen({
+                no_results_text: "No authors found",
+             });
+             $("#bookRating").chosen({
+                disable_search: true,
+                width: 169
+             });
+             $('#PublishingDate').datepicker({
+                dateFormat: "dd.mm.yy",
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-60:+0",
+                defaultDate: 1
+             });
+
+             $("#PublishingDate").val("Select date...");
+             $("#PagesCount").val("");
+
+             $("#saveBookBtn").click(function () {
+                var $form = $(this).parents('form');
+                var model = $form.serialize();
+
+                $.ajax({
+                   type: "POST",
+                   url: $form.attr('action'),
+                   data: $form.serialize(),  // add unobtrusive validation || ajax.beginform
+                   error: function (xhr, status, error) {
+                   },
+                   success: function (response) {
+                      if (response.success) {
+                         $("#booksTable").DataTable().destroy();
+                         initDataTable("#booksTable").ajax.reload();
+                         alert(response.message);
+                      }
+                   }
+                });
+             });
+          }
+
+          initInputs();
+
+       });
+   </script>
+
