@@ -77,12 +77,22 @@ namespace LibraryTestApp.DbServices
             {
                 var dbBook = ctx.Books.FirstOrDefault(b => b.Id == book.Id);
                 if (dbBook == null) return 0;
+                var deletedAuthors = dbBook.Authors.Select(a => a.Id).Except(book.Authors).ToList();
+                var addedAuthors = book.Authors.Except(dbBook.Authors.Select(a => a.Id)).ToList();
+                deletedAuthors.ForEach(da => dbBook.Authors.Remove(dbBook.Authors.FirstOrDefault(a => a.Id == da)));
+
+                foreach (var author in addedAuthors)
+                {
+                    var toAdd = ctx.Authors.FirstOrDefault(a => a.Id == author);
+                    dbBook.Authors.Add(toAdd);
+                }
+
                 dbBook.Name = book.Name;
-                dbBook.Authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
-                dbBook.PagesCount = book.PagesCount;
+                //dbBook.Authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
+                dbBook.PagesCount = book.PagesCount;    
                 dbBook.PublishingDate = book.PublishingDate;
                 dbBook.Rating = book.Rating;
-
+                
                 return ctx.SaveChanges();
 
             }
