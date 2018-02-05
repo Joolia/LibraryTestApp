@@ -1,16 +1,17 @@
 ﻿$(function () {
    function initDataTable(tableId) {
       return $(tableId).DataTable({
-         "bServerSide": true,
-         "sAjaxSource": "Home/TableAjaxHandler",
-         "bProcessing": true,
-         "bLengthChange": false,
-         "bInfo": false,
-         "ordering": false,
+         "serverSide": true,
+         "ajax": "Home/TableAjaxHandler",
+         "processing": true,
+         "lengthChange": false,
+         "displayLength": 10, 
+         //"bInfo": false,    
+         //"ordering": false,
          "initComplete": function () {
             $(".delete_link").click(function () {
                if (confirm("Do you want to delete the book?")) {
-                  var id = $(this).data("bookid");
+                  var id = $(this).parent().data("bookid");
                   $.ajax({
                      type: "POST",
                      url: 'Home/DeleteBook',
@@ -28,7 +29,7 @@
                }
             });
             $(".book_link").click(function () {
-               var id = $(this).data("bookid");
+               var id = $(this).parent().data("bookid");
                $.ajax({
                   type: "GET",
                   url: 'Home/AddBookPartial',
@@ -42,17 +43,30 @@
                });
             });
          },
-         "aoColumns": [
+         "columns": [
+            { "data": "Id" },
             {
-               "sName": "ID",
-               "bSearchable": false,
-               "bSortable": false
+               "data": "Name",
+               "render": function(data, type, row) {
+                  return '<div data-bookid=\"' + row.Id + '\">' +
+                     '<a href=\"javascript:void(0)\" class=\"delete_link\"><i class=\"fa fa-trash\"></i></a> ' +
+                     '<a href=\"javascript:void(0)\" class=\"book_link\">' + data + '</a>' +
+                     '</div>';
+               }
             },
-            { "sName": "BOOK_NAME" },
-            { "sName": "PAGES" },
-            { "sName": "AUTHORS" },
-            { "sName": "PUBLISHED" },
-            { "sName": "RATING" }
+            { "data": "PagesCount" },
+            {
+               "data": "Authors",
+               "render": function (data, type, row) {
+                  var namesStr = data.map(function(item) {
+                     return '<a href=\"javascript:void(0)\" class=\"author_link\" data-authorid=\"' + item.Id + '\">' + item.FirstName + " " + item.LastName + '</a>';
+                  });
+
+                  return namesStr.join(", ");
+               }
+            },
+            { "data": "PublishsingDateFormatted" },
+            { "data": "Rating" }
          ]
       });
    }

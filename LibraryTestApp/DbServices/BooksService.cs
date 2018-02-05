@@ -11,6 +11,24 @@ namespace LibraryTestApp.DbServices
 {
     public class BooksService
     {
+        
+        public List<BookTableItem> GetBookTableItems()
+        {
+            using (var ctx = new BooksCatalogue())
+            {
+                var totalBooks = ctx.Books.Select(b => new Models.BookTableItem
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Authors = b.Authors.ToList(),
+                    PagesCount = b.PagesCount,
+                    PublishingDate = b.PublishingDate,
+                    Rating = b.Rating
+                }).OrderByDescending(x => x.Id).ToList();
+
+                return totalBooks;
+            }
+        }
         public int AddBook(Models.Book book)
         {
             using (var ctx = new BooksCatalogue())

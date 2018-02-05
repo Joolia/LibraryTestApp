@@ -13,29 +13,20 @@ namespace LibraryTestApp.Models
         public string Name { get; set; }
 
         public DateTime PublishingDate { get; set; }
-       
+
+        public string PublishsingDateFormatted => PublishingDate.ToShortDateString();
+
         public  List<EntityClasses.Author> Authors { get; set; }
 
         public int Rating { get; set; }
 
         public int PagesCount { get; set; }
-
-        // to datatable 
-        public string EditLink => $"<a href=\"javascript:void(0)\" class=\"delete_link\" data-bookid=\"{Id}\"><i class=\"fa fa-trash\"></i></a>  <a href=\"javascript:void(0)\" class=\"book_link\" data-bookid=\"{Id}\">{Name}</a>";
-
-        public string AuthorsListLinks => string.Join(",",
-            Authors.Select(a =>
-                $"<a href=\"{ToUnderscore(a.FirstName)}/{ToUnderscore(a.LastName)}\">{a.FirstName} {a.LastName}<a/>"));
-
-        //public string ToAuthorLink(string urlActionLink, Models.Author a)
-        //{
-        //    return Authors.Select(a => )
-        //    //return $"<a href=\"{urlActionLink}\">{a.FirstName} {a.LastName}<a/>";
-        //}
-
-        private string ToUnderscore(string s)
+        
+        public bool Filter(string searchText)
         {
-            return s.Replace(" ", "_");
+            return Id.ToString().Contains(searchText) || Name.Contains(searchText) ||
+                   PublishingDate.ToShortDateString().Contains(searchText) ||
+                   string.Join(", ", Authors).Contains(searchText);
         }
     }
 }

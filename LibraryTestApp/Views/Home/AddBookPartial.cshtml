@@ -2,17 +2,20 @@
 
 @model Book
 @{
-   Layout = null;
-   List<Author> authorsList = ViewBag.Authors;
-   List<SelectListItem> authors = authorsList.Select(x => new SelectListItem
+    Layout = null;
+    List<Author> authorsList = ViewBag.Authors;
+    //MultiSelectList authors = Model.Id == 0 ? default(MultiSelectList) : new MultiSelectList(authorsList, "Id","LastName", authorsList.Where(a => Model.Authors.Contains(a.Id)));
+   var authors = authorsList.Select(a => new SelectListItem
    {
-      Text = $"{x.FirstName} {x.LastName}", Selected = (Model.Id != 0 && Model.Authors.Contains(x.Id)), Value = x.Id.ToString()
-   }).ToList();
+       Text =  a.FirstName + " " + a.LastName,
+      Value = a.Id.ToString(),
+      Selected = Model.Id != 0 && Model.Authors.Contains(a.Id)
+   });
    var ratings = new List<SelectListItem>();
-   for (var i = 1; i <= 10; i++)
-   {
-      ratings.Add(new SelectListItem {Text = i.ToString(), Value = i.ToString(), Selected = Model.Rating == i});
-   }
+    for (var i = 1; i <= 10; i++)
+    {
+       ratings.Add(new SelectListItem {Text = i.ToString(), Value = i.ToString(), Selected = Model.Rating == i});
+    }
 }
 
 <div>
@@ -24,17 +27,28 @@
       @Html.TextBoxFor(model => model.Name)
       <br/>
       @Html.LabelFor(model=>model.PublishingDate, "Book publishing date: ")
-      @Html.EditorFor(model => model.PublishingDate,
-         new { @class = "date-picker", id= "publishDate" })
+      @*@Html.EditorFor(model => model.PublishingDate,
+         new { @class = "date-picker", id= "publishDate" })*@
+      @(Model.Id == 0 ? Html.TextBoxFor(model => model.PublishingDate, new {@class = "date-picker", Value = ""}) : Html.TextBoxFor(model => model.PublishingDate, "{0:d}", new {@class = "date-picker"}))
+
       <br/>
       @Html.LabelFor(model => model.Rating, "Rating: ")
-      @Html.DropDownListFor(model=> model.Rating, ratings, new { id = "bookRating" })
+      @Html.DropDownListFor(model=> model.Rating, ratings, new { id = "bookRating" })  
       <br/>
       @Html.LabelFor(model=>model.PagesCount, "Pages amount: ")
       @Html.TextBoxFor(model => model.PagesCount)
       <br/>
       @Html.LabelFor(model => model.Authors, "Authors: ")
-      @Html.DropDownListFor(model => model.Authors, authors, new {id = "authorsSelect", @class="multi-select", @multiple=true, @data_placeholder = " "})
+      @*@Html.DropDownListFor(model => model.Authors, authors, new {id = "authorsSelect", @class="multi-select", @multiple=true, @data_placeholder = " "})*@
+      
+      <select multiple id="authorsSelect" name="Authors" class="multi-select">
+
+    @foreach(var item in authors)
+    {
+       <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
+    }
+
+   </select>
       <input type="button" id="saveBookBtn" name="SaveButton" value="Save" />
    }
 </div>
@@ -53,13 +67,9 @@
                 dateFormat: "dd.mm.yy",
                 changeMonth: true,
                 changeYear: true,
-                yearRange: "-60:+0",
-                defaultDate: 1
+                yearRange: "-60:+0"
              });
-
-             $("#PublishingDate").val("Select date...");
-             $("#PagesCount").val("");
-
+             
              $("#saveBookBtn").click(function () {
                 var $form = $(this).parents('form');
                 var model = $form.serialize();
@@ -80,9 +90,7 @@
                 });
              });
           }
-
-          initInputs();
-
-       });
+       initInputs();
+          });
    </script>
 
