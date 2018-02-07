@@ -3,7 +3,7 @@
 }
 
 .add_book_cnt, #editAuthorContainer {
-   padding: 10px;
+   padding: 10px 0 10px 30px;
 }
 
 .add_book_cnt .chosen-container-single .chosen-single {

@@ -75,7 +75,7 @@ namespace LibraryTestApp.DbServices
         {
             using (var ctx = new BooksCatalogue())
             {
-                var dbBook = ctx.Books.FirstOrDefault(b => b.Id == book.Id);
+                var dbBook = ctx.Books.Include("Authors").FirstOrDefault(b => b.Id == book.Id);
                 if (dbBook == null) return 0;
                 var deletedAuthors = dbBook.Authors.Select(a => a.Id).Except(book.Authors).ToList();
                 var addedAuthors = book.Authors.Except(dbBook.Authors.Select(a => a.Id)).ToList();
@@ -84,9 +84,12 @@ namespace LibraryTestApp.DbServices
                 foreach (var author in addedAuthors)
                 {
                     var toAdd = ctx.Authors.FirstOrDefault(a => a.Id == author);
+                    //dbBook.Authors.Add(toAdd);
+                    if (ctx.Entry(toAdd).State == System.Data.Entity.EntityState.Detached && toAdd != null)
+                        ctx.Authors.Attach(toAdd);
                     dbBook.Authors.Add(toAdd);
                 }
-
+                        
                 dbBook.Name = book.Name;
                 //dbBook.Authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
                 dbBook.PagesCount = book.PagesCount;    
