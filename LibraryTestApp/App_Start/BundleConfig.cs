@@ -42,6 +42,9 @@ namespace LibraryTestApp
             
             bundles.Add(new StyleBundle("~/Content/cssjqueryui").Include(
                 "~/Content/themes/base/jquery-ui.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryunobtrusive").Include(
+                "~/Scripts/jquery.unobtrusive-ajax.min.js"));
         }
     }
 }

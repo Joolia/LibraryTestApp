@@ -1,5 +1,6 @@
 ﻿$(function () {
    initDataTable("#booksTable");
+   bindBookTableEvents();  
 });
 var initDataTable = function (tableId) {
    return $(tableId).DataTable({
@@ -11,42 +12,6 @@ var initDataTable = function (tableId) {
       //"bInfo": false,    
       //"ordering": false,
       "initComplete": function () {
-         $(".delete_link").click(function () {
-            if (confirm("Do you want to delete the book?")) {
-               var id = $(this).parent().data("bookid");
-               $.ajax({
-                  type: "POST",
-                  url: 'Home/DeleteBook',
-                  data: { id: id },
-                  error: function (xhr, status, error) {
-                  },
-                  success: function (response) {
-                     $("#booksTable").DataTable().destroy();
-                     initDataTable("#booksTable").ajax.reload();
-                     //alert(response.message);
-                  }
-               });
-            } else {
-               return false;
-            }
-         });
-         $(".book_link").click(function () {
-            var id = $(this).parent().data("bookid");
-            $.ajax({
-               type: "GET",
-               url: 'Home/AddBookPartial',
-               data: { id: id },
-               error: function (xhr, status, error) {
-               },
-               success: function (response) {
-                  $("#addBookContainer").html(response);
-                  $("html, body").animate({
-                     scrollTop: 0
-                  }, 200);
-                  //initInputs();
-               }
-            });
-         });
       },
       "columns": [
          { "data": "Id" },
@@ -75,25 +40,67 @@ var initDataTable = function (tableId) {
       ]
    });
 }
-var editBookAjax = function (form) {
-   $.ajax({
-      type: "POST",
-      url: form.attr('action'),
-      data: form.serialize(),  // add unobtrusive validation || ajax.beginform
-      error: function (xhr, status, error) {
-      },
-      success: function (response) {
-         if (response.success) {
-            $("#booksTable").DataTable().destroy();
-            initDataTable("#booksTable").ajax.reload(function() {
-               alert(response.message);
-               editBookPartialAjax();
-            });
+//var editBookAjax = function (form) {
+//   $.ajax({
+//      type: "POST",
+//      url: form.attr('action'),
+//      data: form.serialize(),  // add unobtrusive validation || ajax.beginform
+//      error: function (xhr, status, error) {
+//      },
+//      success: function (response) {
+//         if (response.success) {
+//            onEditCreateSuccess();
+//         }
+//      }
+//   });
+//}
 
-         }
+var bindBookTableEvents = function(){
+   $("#booksTable").on("click", ".delete_link", function () {
+      if (confirm("Do you want to delete the book?")) {
+         var id = $(this).parent().data("bookid");
+         $.ajax({
+            type: "POST",
+            url: 'Home/DeleteBook',
+            data: { id: id },
+            error: function (xhr, status, error) {
+            },
+            success: function (response) {
+               $("#booksTable").DataTable().destroy();
+               initDataTable("#booksTable").ajax.reload();
+               //alert(response.message);
+            }
+         });
+      } else {
+         return false;
       }
    });
+   $("#booksTable").on("click", ".book_link", function () {
+      var id = $(this).parent().data("bookid");
+      $.ajax({
+         type: "GET",
+         url: 'Home/AddBookPartial',
+         data: { id: id },
+         error: function (xhr, status, error) {
+         },
+         success: function (response) {
+            $("#addBookContainer").html(response);
+            $("html, body").animate({
+               scrollTop: 0
+            }, 200);
+            //initInputs();
+         }
+      });
+   });
 }
+
+var onEditCreateSuccess = function(response) {
+   $("#booksTable").DataTable().destroy();
+   initDataTable("#booksTable").ajax.reload(function () {   
+      alert(response.message);
+      editBookPartialAjax();
+   });
+}  
 var initInputs = function () {
    $("#authorsSelect").chosen({
       no_results_text: "No authors found",
@@ -109,12 +116,12 @@ var initInputs = function () {
       yearRange: "-60:+0"
    });
 
-   $("#saveBookBtn").click(function () {
-      var $form = $(this).parents('form');
-      var model = $form.serialize();
+   //$("#saveBookBtn").click(function () {
+   //   var $form = $(this).parents('form');
+   //   var model = $form.serialize();
 
-      editBookAjax($form);
-   });
+   //   editBookAjax($form);
+   //});
 }
 var editBookPartialAjax = function() {
    $.ajax({

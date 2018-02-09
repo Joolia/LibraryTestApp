@@ -19,7 +19,13 @@
 }
 
 <div>
-   @using (Html.BeginForm("EditCreateBook", "Home", new {id = "addBookForm", data_bookId = 0}))
+   @using (Ajax.BeginForm("EditCreateBook", "Home", new AjaxOptions
+   {
+      UpdateTargetId = "addBookContainer", 
+      HttpMethod = "POST",
+      OnSuccess = "onEditCreateSuccess"
+   },
+      new {id = "addBookForm", data_bookId = 0}))  
    {
       @Html.HiddenFor(model => model.Id)
 
@@ -27,8 +33,6 @@
       @Html.TextBoxFor(model => model.Name)
       <br/>
       @Html.LabelFor(model=>model.PublishingDate, "Book publishing date: ")
-      @*@Html.EditorFor(model => model.PublishingDate,
-         new { @class = "date-picker", id= "publishDate" })*@
       @(Model.Id == 0 ? Html.TextBoxFor(model => model.PublishingDate, new {@class = "date-picker", Value = ""}) : Html.TextBoxFor(model => model.PublishingDate, "{0:d}", new {@class = "date-picker"}))
       <br/>
       @Html.LabelFor(model => model.Rating, "Rating: ")
@@ -38,17 +42,16 @@
       @Html.TextBoxFor(model => model.PagesCount)
       <br/>
       @Html.LabelFor(model => model.Authors, "Authors: ")
-      @*@Html.DropDownListFor(model => model.Authors, authors, new {id = "authorsSelect", @class="multi-select", @multiple=true, @data_placeholder = " "})*@
       <select multiple id="authorsSelect" name="Authors" class="multi-select">
-    @foreach(var item in authors)
-    {
-       <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
-    }
-
-   </select>
-      <input type="button" id="saveBookBtn" name="SaveButton" value="Save" />
+         @foreach(var item in authors)
+         {
+            <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
+         }
+      </select>
+      <input type="submit" id="saveBookBtn" name="SaveButton" value="Save" />
       <input type="reset" value="Clear form">
    }
+
 </div>
 <script>
    $(function() {
