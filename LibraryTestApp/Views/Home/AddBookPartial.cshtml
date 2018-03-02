@@ -25,31 +25,39 @@
       HttpMethod = "POST",
       OnSuccess = "onEditCreateSuccess"
    },
-      new {id = "addBookForm", data_bookId = 0}))  
+      new {id = "addBookForm"}))  
    {
       @Html.HiddenFor(model => model.Id)
 
       @Html.LabelFor(model=>model.Name, "Book name: ")
-      @Html.TextBoxFor(model => model.Name)
+      @Html.TextBoxFor(model => model.Name, new {@class = "form_field"})
+       @Html.ValidationMessageFor(model => model.Name)
       <br/>
       @Html.LabelFor(model=>model.PublishingDate, "Book publishing date: ")
-      @(Model.Id == 0 ? Html.TextBoxFor(model => model.PublishingDate, new {@class = "date-picker", Value = ""}) : Html.TextBoxFor(model => model.PublishingDate, "{0:d}", new {@class = "date-picker"}))
-      <br/>
+      @(Model.Id == 0 ? Html.TextBoxFor(model => model.PublishingDate, new {@class = "date-picker form_field", Value = ""}) : Html.TextBoxFor(model => model.PublishingDate, "{0:d}", new {@class = "date-picker form_field"}))
+      @Html.ValidationMessageFor(model => model.PublishingDate)
+       <br/>
       @Html.LabelFor(model => model.Rating, "Rating: ")
-      @Html.DropDownListFor(model=> model.Rating, ratings, new { id = "bookRating" })  
+      @Html.DropDownListFor(model=> model.Rating, ratings, new { id = "bookRating", @class="form_field" })  
+       @Html.ValidationMessageFor(model => model.Rating)
       <br/>
       @Html.LabelFor(model=>model.PagesCount, "Pages amount: ")
-      @Html.TextBoxFor(model => model.PagesCount)
+      @Html.TextBoxFor(model => model.PagesCount, new { @class = "form_field", Value = Model.PagesCount > 0 ? Model.PagesCount.ToString() : string.Empty })
+       @Html.ValidationMessageFor(model => model.PagesCount)
       <br/>
       @Html.LabelFor(model => model.Authors, "Authors: ")
-      <select multiple id="authorsSelect" name="Authors" class="multi-select">
-         @foreach(var item in authors)
-         {
-            <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
-         }
-      </select>
-      <input type="submit" id="saveBookBtn" name="SaveButton" value="Save" />
-      <input type="reset" value="Clear form">
+       <select multiple id="authorsSelect" name="Authors" class="multi-select form_field">
+           @foreach(var item in authors)
+           {
+               <option value="@item.Value" @(item.Selected ? "selected" : "")>@item.Text</option>
+           }
+       </select>
+      @Html.ValidationMessageFor(model => model.Authors)
+       <div class="btn_cnt">
+           <input type="submit" id="saveBookBtn" name="SaveButton" value="Save" />
+           <input type="reset" value="Clear form">
+       </div>
+
    }
 
 </div>

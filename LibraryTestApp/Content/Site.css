@@ -3,12 +3,26 @@
 }
 
 .add_book_cnt, #editAuthorContainer {
-   padding: 10px 0 10px 30px;
+    padding: 10px 0 10px 30px;
 }
 
-.add_book_cnt .chosen-container-single .chosen-single {
-   position: static;
+    .add_book_cnt label{
+        width: 45%;
+        text-align: right;
+        margin-right: 0.5em;
+    }
+
+.btn_cnt {
+    text-align: center;
 }
+
+.add_book_cnt .form_field, #bookRating_chosen, #authorsSelect_chosen {
+    margin: 5px;
+}
+
+    .add_book_cnt .chosen-container-single .chosen-single {
+        position: static;
+    }
 
 .add_book_cnt input, 
 .add_book_cnt select, 
@@ -18,7 +32,7 @@
 }
 
 .add_book_cnt #authorsSelect_chosen {
-   width: 200px !important;
+   width: 169px !important;
 }
 
 .fa-trash {

@@ -45,6 +45,9 @@ namespace LibraryTestApp
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryunobtrusive").Include(
                 "~/Scripts/jquery.unobtrusive-ajax.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryvalidate").Include(
+                "~/Scripts/jquery.validate*"));
         }
     }
 }

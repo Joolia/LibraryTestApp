@@ -16,7 +16,7 @@ namespace LibraryTestApp
 
             routes.MapRoute(
                 name: "Author",
-                url: "{firstName}/{lastName}",
+                url: "{firstName}_{lastName}",
                 defaults: new { controller = "Author", action = "EditAuthor" },
                 constraints: new { firstName = new AuthorFirstNameConstraint(), lastName = new AuthorLastNameConstraint()}
             );

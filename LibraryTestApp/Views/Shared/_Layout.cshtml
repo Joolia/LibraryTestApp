@@ -1,25 +1,32 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-   <meta charset="utf-8"/>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-   <title>Books catalogue application</title>
-   @Styles.Render("~/Content/css")
-   @Scripts.Render("~/bundles/modernizr")
-   @Scripts.Render("~/bundles/jquery")
-   @Scripts.Render("~/bundles/chosenjs")
-   @Scripts.Render("~/bundles/datatable")
-   @Scripts.Render("~/bundles/jqueryui")
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Books catalogue application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/chosenjs")
+    @Scripts.Render("~/bundles/datatable")
+    @Scripts.Render("~/bundles/jqueryui")
 
-   @Styles.Render("~/Content/DataTables")
-   @Styles.Render("~/Content/Chosen")
-   @Styles.Render("~/Content/cssjqueryui")
+    @Styles.Render("~/Content/DataTables")
+    @Styles.Render("~/Content/Chosen")
+    @Styles.Render("~/Content/cssjqueryui")
 
-   @Scripts.Render("~/bundles/custom")
-   @Scripts.Render("~/bundles/jqueryunobtrusive")
-   @RenderSection("scripts", false)
+    @Scripts.Render("~/bundles/custom")
+    @Scripts.Render("~/bundles/jqueryunobtrusive")
+    @Scripts.Render("~/bundles/jqueryvalidate")
+    @RenderSection("scripts", false)
+    
+    <script>
+        $('form').validate({
+            ignore: []
+        });
+    </script>
 </head>
 <body>
 

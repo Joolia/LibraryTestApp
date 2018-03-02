@@ -29,7 +29,7 @@ var initDataTable = function (tableId) {
             "data": "Authors",
             "render": function (data, type, row) {
                var namesStr = data.map(function (item) {
-                  return '<a href=\"javascript:void(0)\" class=\"author_link\" data-authorid=\"' + item.Id + '\">' + item.FirstName + " " + item.LastName + '</a>';
+                   return '<a href=\"' + item.FirstName + "_" + item.LastName + '\" class=\"author_link\" data-authorid=\"' + item.Id + '\">' + item.FirstName + " " + item.LastName + '</a>';
                });
 
                return namesStr.join(", ");

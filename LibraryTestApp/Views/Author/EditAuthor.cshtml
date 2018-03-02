@@ -10,11 +10,14 @@
 <div id="editAuthorContainer">
    @using (Html.BeginForm("EditAuthorPost", "Author", FormMethod.Post, new {id = "editAuthorForm", data_authorId = Model.Id}))
    {
+       @Html.HiddenFor(model => model.Id)
       @Html.LabelFor(model => model.FirstName, "First name: ")
       @Html.TextBoxFor(model => model.FirstName)
+      @Html.ValidationMessageFor(model => model.FirstName)
       <br/>
       @Html.LabelFor(model => model.LastName, "Last name: ")
       @Html.TextBoxFor(model => model.LastName)
+       @Html.ValidationMessageFor(model => model.LastName)
       <input type="submit" id="saveAuthorBtn" name="SaveButton" value="Save"/>
    }
 </div>
