@@ -9,17 +9,23 @@ namespace LibraryTestApp.Controllers
         private readonly AuthorsService aService = new AuthorsService();
 
         // GET: Author
-        public ActionResult EditAuthor(string firstName, string lastName)
+        public ActionResult EditAuthor(string fullname)
         {
-            var author = aService.GetAuthor(firstName, lastName);
+            var authorNames = fullname.Split('_');
+
+            var author = aService.GetAuthor(authorNames[0], authorNames[1]);
             return View("EditAuthor", author);
         }
 
-        public JsonResult EditAuthorPost(int id, string firstName, string lastName)
+        [HttpPost]
+        public ActionResult EditAuthorPost(int id, string firstName, string lastName)
         {
-           return Json(aService.EditAuthor(id, firstName, lastName) > 0 ? new { success = "True", message = $"Author {firstName} {lastName} was edited successfully." }
-                   : new { success = "False", message = $"Something went wrong." },
-               JsonRequestBehavior.AllowGet);
+            aService.EditAuthor(id, firstName, lastName);
+           //return Json(aService.EditAuthor(id, firstName, lastName) > 0 ? new { success = "True", message = $"Author {firstName} {lastName} was edited successfully." }
+           //        : new { success = "False", message = $"Something went wrong." },
+           //    JsonRequestBehavior.AllowGet);
+            return RedirectToAction("Index","Home");
+
         }
     }
 }
