@@ -10,9 +10,9 @@ namespace LibraryTestApp.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "First name isn't specified.")]
         public string FirstName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Last name isn't specified.")]
         public string LastName { get; set; }
         //public int BooksCount { get; set; }
         public List<int> Books { get; set; }

@@ -11,18 +11,18 @@ namespace LibraryTestApp.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name isn't filled.")]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Publishing date isn't selected.")]
         public DateTime PublishingDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Authors aren't specified.")]
         public List<int> Authors { get; set; }
 
         [Required]
         [Range(1, 10, ErrorMessage = "Rating must be in range from 1 to 10.")]
         public int Rating { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "The number of pages isn't specified.")]
         public int PagesCount { get; set; }
     }
 }

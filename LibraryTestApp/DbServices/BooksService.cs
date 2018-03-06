@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 using LibraryTestApp.EntityClasses;
+using LibraryTestApp.Exceptions;
 using LibraryTestApp.Models;
 
 namespace LibraryTestApp.DbServices
@@ -16,24 +17,31 @@ namespace LibraryTestApp.DbServices
         {
             using (var ctx = new BooksCatalogue())
             {
-                var totalBooks = ctx.Books.Select(b => new Models.BookTableItem
+                try
                 {
-                    Id = b.Id,
-                    Name = b.Name,
-                    Authors = b.Authors.ToList(),
-                    PagesCount = b.PagesCount,
-                    PublishingDate = b.PublishingDate,
-                    Rating = b.Rating
-                }).OrderByDescending(x => x.Id).ToList();
+                    var totalBooks = ctx.Books.Select(b => new Models.BookTableItem
+                    {
+                        Id = b.Id,
+                        Name = b.Name,
+                        Authors = b.Authors.ToList(),
+                        PagesCount = b.PagesCount,
+                        PublishingDate = b.PublishingDate,
+                        Rating = b.Rating
+                    }).OrderByDescending(x => x.Id).ToList();
 
-                return totalBooks;
+                    return totalBooks;
+                }
+                catch (Exception ex)
+                {
+                    throw new BookException(ex.Message);
+                }
             }
         }
-        public int AddBook(Models.Book book)
+        public void AddBook(Models.Book book)
         {
             using (var ctx = new BooksCatalogue())
             {
-                if (!ctx.Books.Any(b => b.Name.Contains(book.Name)))
+                try
                 {
                     var authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
                     ctx.Books.Add(new EntityClasses.Book
@@ -46,11 +54,10 @@ namespace LibraryTestApp.DbServices
                     });
 
                     ctx.SaveChanges();
-                    return 1; // exceptions 
                 }
-                else
+                catch (Exception ex)
                 {
-                    return 0;
+                    throw new BookException(ex.Message);
                 }
             }
         }
@@ -59,57 +66,79 @@ namespace LibraryTestApp.DbServices
         {
             using (var ctx = new BooksCatalogue())
             {
-                return id != 0 ? ctx.Books.Select(b => new Models.Book
+                try
                 {
-                    Id = b.Id,
-                    Name = b.Name,
-                    Authors = b.Authors.Select(a => a.Id).ToList(),
-                    Rating = b.Rating,
-                    PagesCount = b.PagesCount,
-                    PublishingDate = b.PublishingDate
-                }).FirstOrDefault(x => x.Id == id) : new Models.Book();
-            }
-        }
-
-        public int UpdateBook(Models.Book book)
-        {
-            using (var ctx = new BooksCatalogue())
-            {
-                var dbBook = ctx.Books.Include("Authors").FirstOrDefault(b => b.Id == book.Id);
-                if (dbBook == null) return 0;
-                var deletedAuthors = dbBook.Authors.Select(a => a.Id).Except(book.Authors).ToList();
-                var addedAuthors = book.Authors.Except(dbBook.Authors.Select(a => a.Id)).ToList();
-                deletedAuthors.ForEach(da => dbBook.Authors.Remove(dbBook.Authors.FirstOrDefault(a => a.Id == da)));
-
-                foreach (var author in addedAuthors)
-                {
-                    var toAdd = ctx.Authors.FirstOrDefault(a => a.Id == author);
-                    //dbBook.Authors.Add(toAdd);
-                    if (ctx.Entry(toAdd).State == System.Data.Entity.EntityState.Detached && toAdd != null)
-                        ctx.Authors.Attach(toAdd);
-                    dbBook.Authors.Add(toAdd);
+                    return id != 0
+                        ? ctx.Books.Select(b => new Models.Book
+                        {
+                            Id = b.Id,
+                            Name = b.Name,
+                            Authors = b.Authors.Select(a => a.Id).ToList(),
+                            Rating = b.Rating,
+                            PagesCount = b.PagesCount,
+                            PublishingDate = b.PublishingDate
+                        }).FirstOrDefault(x => x.Id == id)
+                        : new Models.Book();
                 }
-                        
-                dbBook.Name = book.Name;
-                //dbBook.Authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
-                dbBook.PagesCount = book.PagesCount;    
-                dbBook.PublishingDate = book.PublishingDate;
-                dbBook.Rating = book.Rating;
-                
-                return ctx.SaveChanges();
+                catch (Exception ex)
+                {
+                    throw new BookException(ex.Message);
+                }
+            }
+        }
+
+        public void UpdateBook(Models.Book book)
+        {
+            using (var ctx = new BooksCatalogue())
+            {
+                try
+                {
+                    var dbBook = ctx.Books.Include("Authors").FirstOrDefault(b => b.Id == book.Id);
+                    if (dbBook == null) throw new BookException("Book doesn't exist.");
+                    var deletedAuthors = dbBook.Authors.Select(a => a.Id).Except(book.Authors).ToList();
+                    var addedAuthors = book.Authors.Except(dbBook.Authors.Select(a => a.Id)).ToList();
+                    deletedAuthors.ForEach(da => dbBook.Authors.Remove(dbBook.Authors.FirstOrDefault(a => a.Id == da)));
+
+                    foreach (var author in addedAuthors)
+                    {
+                        var toAdd = ctx.Authors.FirstOrDefault(a => a.Id == author);
+                        //dbBook.Authors.Add(toAdd);
+                        if (ctx.Entry(toAdd).State == System.Data.Entity.EntityState.Detached && toAdd != null)
+                            ctx.Authors.Attach(toAdd);
+                        dbBook.Authors.Add(toAdd);
+                    }
+
+                    dbBook.Name = book.Name;
+                    //dbBook.Authors = ctx.Authors.Where(a => book.Authors.Contains(a.Id)).ToList();
+                    dbBook.PagesCount = book.PagesCount;
+                    dbBook.PublishingDate = book.PublishingDate;
+                    dbBook.Rating = book.Rating;
+
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw new BookException(ex.Message);
+                }
 
             }
         }
 
-        public int RemoveBook(int id)
+        public void RemoveBook(int id)
         {
             using (var ctx = new BooksCatalogue())
             {
-                var book = ctx.Books.FirstOrDefault(b => b.Id == id);
-                if (book == null) return 0;
-                ctx.Books.Remove(book);
-                ctx.SaveChanges();
-                return 1;
+                try
+                {
+                    var book = ctx.Books.FirstOrDefault(b => b.Id == id);
+                    if (book == null) throw new BookException("Book doesn't exist.");
+                    ctx.Books.Remove(book);
+                    ctx.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw new BookException(ex.Message);
+                }
 
             }
         }

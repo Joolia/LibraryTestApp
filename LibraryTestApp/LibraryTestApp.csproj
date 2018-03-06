@@ -154,6 +154,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DbServices\AuthorsService.cs" />
     <Compile Include="DbServices\BooksService.cs" />
+    <Compile Include="Exceptions\CustomException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

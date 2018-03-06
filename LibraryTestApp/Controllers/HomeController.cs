@@ -19,10 +19,8 @@ namespace LibraryTestApp.Controllers
 
         public JsonResult AddBookAjax(Models.Book book)
         {
-            return Json(
-                bService.AddBook(book) > 0
-                    ? new {success = "True", message = $"The book {book.Name} was created successfully."}
-                    : new {success = "False", message = $"The book {book.Name} already exists."},
+            bService.AddBook(book);
+            return Json(new {success = "True", message = $"The book {book.Name} was created successfully."},
                 JsonRequestBehavior.AllowGet);
         }
         
@@ -72,10 +70,9 @@ namespace LibraryTestApp.Controllers
         {
             if (book.Id != 0)
             {
-                return Json(
-                    bService.UpdateBook(book) > 0
-                        ? new {success = "True", message = $"The book {book.Name} was updated successfully."}
-                        : new {success = "False", message = $"Something went wrong."}, JsonRequestBehavior.AllowGet);
+                bService.UpdateBook(book);
+                return Json(new {success = "True", message = $"The book {book.Name} was updated successfully."}
+                    , JsonRequestBehavior.AllowGet);
             }
 
             //return Json(new { success = "True", message = $"The book {book.Name} was created successfully." });
@@ -84,10 +81,9 @@ namespace LibraryTestApp.Controllers
 
         public JsonResult DeleteBook(int id)
         {
-            return Json(
-                bService.RemoveBook(id) > 0
-                    ? new {success = "True", message = $"The book was deleted."}
-                    : new {success = "False", message = $"Something went wrong."}, JsonRequestBehavior.AllowGet);
+            bService.RemoveBook(id);
+            return Json(new {success = "True", message = $"The book was deleted."},
+                JsonRequestBehavior.AllowGet);
         }
     }
 }
