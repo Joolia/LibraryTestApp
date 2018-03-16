@@ -21,12 +21,5 @@ namespace LibraryTestApp.Models
         public int Rating { get; set; }
 
         public int PagesCount { get; set; }
-        
-        public bool Filter(string searchText)
-        {
-            return Id.ToString().Contains(searchText) || Name.Contains(searchText) ||
-                   PublishingDate.ToShortDateString().Contains(searchText) ||
-                   string.Join(", ", Authors).Contains(searchText);
-        }
     }
 }

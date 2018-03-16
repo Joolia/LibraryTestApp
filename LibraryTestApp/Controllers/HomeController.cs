@@ -26,33 +26,14 @@ namespace LibraryTestApp.Controllers
         
         public ActionResult TableAjaxHandler(jQueryDataTableParamModel param)
         {
-            var totalBooks = bService.GetBookTableItems();
-            var booksCount = totalBooks.Count;
-            var filteredBooks = !string.IsNullOrWhiteSpace(param.sSearch)
-                ? totalBooks.Where(b => b.Filter(param.sSearch))
-                : totalBooks;
-            var booksToDisplay = filteredBooks;
-            var result = from book in booksToDisplay
-                select new BookTableItem
-                {
-                    Id = book.Id,
-                    Name = book.Name,
-                    //book.EditLink,
-                    PagesCount = book.PagesCount,
-                    //book.AuthorsListLinks,
-                    Authors = book.Authors,
-                    PublishingDate = book.PublishingDate.Date,
-                    Rating = book.Rating
-                };
-            var filterdCount = filteredBooks.Count();
+            var tableData = bService.GetTableData(param);
             return Json(
                 new
                 {
-                    sEcho = param.sEcho,
-                    iTotalRecords = booksCount,
-                    iTotalDisplayRecords = filterdCount,
-                    recordsFiltered = filterdCount,
-                    aaData = result.ToList()    
+                    iTotalRecords = tableData.iTotalRecords,
+                    iTotalDisplayRecords = tableData.iTotalDisplayRecords,
+                    recordsFiltered = tableData.recordsFiltered,
+                    aaData = tableData.aaData    
                 }, JsonRequestBehavior.AllowGet);
         }
 

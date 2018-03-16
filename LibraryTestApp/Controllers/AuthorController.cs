@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using LibraryTestApp.DbServices;
+using LibraryTestApp.Models;
 
 namespace LibraryTestApp.Controllers
 {
@@ -18,12 +19,9 @@ namespace LibraryTestApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditAuthorPost(int id, string firstName, string lastName)
+        public ActionResult EditAuthorPost(Author author)
         {
-            aService.EditAuthor(id, firstName, lastName);
-           //return Json(aService.EditAuthor(id, firstName, lastName) > 0 ? new { success = "True", message = $"Author {firstName} {lastName} was edited successfully." }
-           //        : new { success = "False", message = $"Something went wrong." },
-           //    JsonRequestBehavior.AllowGet);
+            aService.EditAuthor(author.Id, author.FirstName, author.LastName);
             return RedirectToAction("Index","Home");
 
         }

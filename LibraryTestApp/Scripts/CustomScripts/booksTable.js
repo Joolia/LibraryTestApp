@@ -5,7 +5,14 @@
 var initDataTable = function (tableId) {
    return $(tableId).DataTable({
       "serverSide": true,
-      "ajax": "Home/TableAjaxHandler",
+      "ajax": {
+          'type': 'POST',
+          'contentType': "application/json",
+          'url': "Home/TableAjaxHandler",
+          'data': function (d) {
+              return JSON.stringify(d);
+          }
+      },
       "processing": true,
       "lengthChange": false,
       "displayLength": 10,
@@ -113,7 +120,7 @@ var initInputs = function () {
       dateFormat: "dd.mm.yy",
       changeMonth: true,
       changeYear: true,
-      yearRange: "-60:+0"
+      yearRange: "-200:+0"
    });
 
    //$("#saveBookBtn").click(function () {

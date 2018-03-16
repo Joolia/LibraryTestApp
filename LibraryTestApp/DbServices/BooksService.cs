@@ -7,36 +7,12 @@ using System.Web.Mvc;
 using LibraryTestApp.EntityClasses;
 using LibraryTestApp.Exceptions;
 using LibraryTestApp.Models;
+using LibraryTestApp.Models.DTO;
 
 namespace LibraryTestApp.DbServices
 {
     public class BooksService
     {
-        
-        public List<BookTableItem> GetBookTableItems()
-        {
-            using (var ctx = new BooksCatalogue())
-            {
-                try
-                {
-                    var totalBooks = ctx.Books.Select(b => new Models.BookTableItem
-                    {
-                        Id = b.Id,
-                        Name = b.Name,
-                        Authors = b.Authors.ToList(),
-                        PagesCount = b.PagesCount,
-                        PublishingDate = b.PublishingDate,
-                        Rating = b.Rating
-                    }).OrderByDescending(x => x.Id).ToList();
-
-                    return totalBooks;
-                }
-                catch (Exception ex)
-                {
-                    throw new BookException(ex.Message);
-                }
-            }
-        }
         public void AddBook(Models.Book book)
         {
             using (var ctx = new BooksCatalogue())
@@ -140,6 +116,75 @@ namespace LibraryTestApp.DbServices
                     throw new BookException(ex.Message);
                 }
 
+            }
+        }
+
+
+        public List<BookTableItem> GetBookTableItems(int skipCount, int takeCount, string searchText)
+        {
+            using (var ctx = new BooksCatalogue())
+            {
+                try
+                {
+                    var totalBooks = ctx.Books.Select(b => new Models.BookTableItem
+                    {
+                        Id = b.Id,
+                        Name = b.Name,
+                        Authors = b.Authors.ToList(),
+                        PagesCount = b.PagesCount,
+                        PublishingDate = b.PublishingDate,
+                        Rating = b.Rating
+                    }).OrderByDescending(x => x.Id);
+
+                    if (string.IsNullOrEmpty(searchText))
+                    {
+                        return totalBooks.Skip(skipCount).Take(takeCount).ToList();
+                    }
+                    else
+                    {
+                        var lowerSearchText = searchText.ToLower();
+                        return totalBooks.Where(tb => tb.Name.ToLower().Contains(lowerSearchText)
+                                                                   || tb.Id.ToString().Contains(lowerSearchText)
+                                                                   || tb.Authors.Where(a => a.FirstName.ToLower().Contains(lowerSearchText)
+                                                                                            || a.LastName.ToLower().Contains(lowerSearchText)).Count() > 0)
+                            .Skip(skipCount).Take(takeCount).ToList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new BookException(ex.Message);
+                }
+            }
+        }
+
+        public BookTableDTO GetTableData(jQueryDataTableParamModel param)
+        {
+            using (var ctx = new BooksCatalogue())
+            {
+                var totalBooksCount = ctx.Books.Count();
+                var booksPortion = GetBookTableItems(param.start, param.length, param.search.value);
+                var booksToDisplay = booksPortion;
+                var result = from book in booksToDisplay
+                             select new BookTableItem
+                             {
+                                 Id = book.Id,
+                                 Name = book.Name,
+                                 //book.EditLink,
+                                 PagesCount = book.PagesCount,
+                                 //book.AuthorsListLinks,
+                                 Authors = book.Authors,
+                                 PublishingDate = book.PublishingDate.Date,
+                                 Rating = book.Rating
+                             };
+                var filteredCount = booksToDisplay.Count();
+
+                return new BookTableDTO
+                {
+                    iTotalDisplayRecords = totalBooksCount,
+                    iTotalRecords = totalBooksCount,
+                    recordsFiltered = filteredCount,
+                    aaData = result.ToList()
+                };
             }
         }
     }

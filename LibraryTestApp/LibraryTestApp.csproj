@@ -175,6 +175,7 @@
     <Compile Include="Models\Book.cs" />
     <Compile Include="EntityClasses\BooksCatalogue.cs" />
     <Compile Include="Models\BookTableItem.cs" />
+    <Compile Include="Models\DTO\BookTableDTO.cs" />
     <Compile Include="Models\jQueryDataTableParamModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
